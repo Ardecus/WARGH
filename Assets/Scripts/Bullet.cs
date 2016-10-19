@@ -1,13 +1,24 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class Bullet : MonoBehaviour {
+public class Bullet : MonoBehaviour
+{
     public int Damage;
-    public string ShootTarget;
 
-    void OnCollisionEnter2D(Collision2D other)
+    private float timer;
+    private const float lifeTime = 10;
+
+    void Update()
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer(ShootTarget))
+        timer += Time.deltaTime;
+        if (timer >= lifeTime)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Shootable"))
         {
             other.gameObject.GetComponent<Health>().Decrease(Damage);
         }

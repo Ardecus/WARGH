@@ -20,9 +20,14 @@ public class PlayerController : MonoBehaviour
         movement.Rotate(cursor);
 
         //shooting
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButton("Fire"))
         {
-            weapon.Shoot("Enemy", Input.GetButton("Run"));
+            weapon.Shoot(Input.GetButton("Run"));
+        }
+
+        if (Input.GetButtonDown("Reload"))
+        {
+            weapon.Reload();
         }
     }
     

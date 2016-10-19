@@ -13,11 +13,17 @@ public class Weapon : MonoBehaviour
     [SerializeField] public GameObject bullet;
 
     private int bulletsNow;
+
     private bool reloading;
     private float reloadTimer;
 
     private bool pausing;
     private float pausingTimer;
+
+    void Awake()
+    {
+        bulletsNow = bulletsInCage;
+    }
 
     void Update()
     {
@@ -40,34 +46,31 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    public void Shoot(string target, bool isRunning)
+    public void Shoot(bool isRunning)
     {
-        if (bulletsNow == 0)
+        if (bulletsNow <= 0)
         {
             Reload();
             return;
         }
         if (!pausing && !reloading)
         {
-            /*
+            //warped angle
             var range = isRunning ? shootAngleRun : shootAngleWalk;
-            var angle = new Vector3(transform.rotation.x,
-                                    transform.rotation.y,
-                                    transform.rotation.z);
-                                    //Random.Range(-1 * range, range) * Mathf.Deg2Rad + transform.rotation.z);
-            var place = new Vector3(transform.position.x,// + 2 * Mathf.Cos(angle.z), 
-                                    transform.position.y,// + 2 * Mathf.Sin(angle.z), 
+            var angle = new Vector3(0, 0, Random.Range(-1 * range, range) + transform.rotation.eulerAngles.z);
+            //position for bllet
+            var place = new Vector3(transform.position.x + 1.5f * Mathf.Cos((angle.z + 90f) * Mathf.Deg2Rad), 
+                                    transform.position.y + 1.5f * Mathf.Sin((angle.z + 90f) * Mathf.Deg2Rad), 
                                     transform.position.z);
-            var proj = (GameObject)Instantiate(bullet, place, Quaternion.Euler(angle));
-            proj.GetComponent<Rigidbody2D>().AddForce(proj.transform.forward * bulletSpeed);
-            proj.transform.rotation = Quaternion.Euler(transform.rotation.x,
-                                                       transform.rotation.y,
-                                                       transform.rotation.z - 90);
-            var model = proj.GetComponent<Bullet>();
-            model.Damage = damage;
-            model.ShootTarget = target;
-            */
-            //shitload
+            //spawned bullet(clone) gameobject
+            var shot = (GameObject)Instantiate(bullet, place, Quaternion.Euler(angle));
+            //adding force for movement
+            shot.GetComponent<Rigidbody2D>().AddForce(shot.transform.up * bulletSpeed);
+            //have no idea how to store damage param
+            shot.GetComponent<Bullet>().Damage = damage;
+            //next shot delay
+            pausing = true;
+            bulletsNow--;
         }
     }
 
